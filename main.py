@@ -1,5 +1,6 @@
 import asyncio
 
+# use coroutines instead of threads
 
 # ["mockEmail0@something.com", "mockEmail1@something.com"]
 def getMockEmails():
@@ -16,6 +17,9 @@ async def mockSendingEmail(mockEmail, mockRecipient):
 
     # TODO: make a real letter content
     # TODO: send to real emails
+    # TODO: add function to login email
+    # TODO: separate logics for email warmp up and logging in
+    # TODO: in getting the emails from a json file put this login in a util dir
 
     await asyncio.sleep(2)
     print(f"{mockEmail} successfully sent an email to {mockRecipient}")
