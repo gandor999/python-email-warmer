@@ -16,7 +16,7 @@ def main():
     mock_emails = email_warmer.build_mock_emails().get_mock_emails()
     
     real_emails: List[EmailModel] = []
-    json_emails = read_json_file("emails.json")
+    json_emails: list[dict] = read_json_file("emails.json")
 
     for json_email in json_emails:
         real_emails.append(EmailModel(json_email["email"], json_email["password"]))
