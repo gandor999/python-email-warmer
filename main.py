@@ -3,6 +3,8 @@ import smtplib, ssl
 from typing import List
 import dotenv
 import os
+import random
+import logging
 
 from classes.email.EmailModel import EmailModel
 from classes.email.EmailWarmer import EmailWarmer
@@ -17,15 +19,10 @@ def main():
     mock_emails = email_warmer.get_mock_emails(3)
     real_emails = email_warmer.get_real_emails("emails.json")
 
-    real_emails: List[EmailModel] = []
-    json_emails: list[dict] = read_json_file("emails.json")
-
-    for json_email in json_emails:
-        real_emails.append(EmailModel(json_email["email"], json_email["password"]))
-
-    # for i in range(5):
-    asyncio.run(email_warmer.execute_warm_up(mock_emails, 5))
-    # asyncio.run(email_warmer.execute_warm_up(real_emails))
+    # while True:
+    # asyncio.run(email_warmer.execute_warm_up(mock_emails, 5))
+    # asyncio.run(email_warmer.execute_warm_up(real_emails, random.randint(1800, 3600)))
+    asyncio.run(email_warmer.execute_warm_up(real_emails, 5))
 
 
 main()
