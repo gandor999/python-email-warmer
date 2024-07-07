@@ -30,6 +30,15 @@ class EmailWarmer:
             )
         return mock_emails
 
+    def get_real_emails(self, json_filename: str):
+        real_emails: List[EmailModel] = []
+        json_emails: list[dict] = read_json_file(json_filename)
+
+        for json_email in json_emails:
+            real_emails.append(EmailModel(json_email["email"], json_email["password"]))
+
+        return real_emails
+
     async def send_email_message(
         self, sender_email: EmailModel, recipient_email: EmailModel
     ):
