@@ -22,7 +22,6 @@ class EmailWarmer:
         self.__logger = logging.getLogger(__name__)
         self.__log_tag = self.__class__.__name__
         # Would this benefit from creating a singleton LibraryManager for the libs being injected? It just seems to be more maintenance
-        pass
 
     # [{"mockEmail0@something.com", "stub password"}, {"mockEmail1@something.com", "stub password"}]
     def get_mock_emails(self, number_of_emails: int = 101):
