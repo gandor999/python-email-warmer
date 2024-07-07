@@ -4,18 +4,23 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from typing import List
 import os
+import logging
 
 from classes.email.EmailModel import EmailModel
-from utils import read_file
+from utils import Singleton, read_file, read_json_file
 
-
+@Singleton
 class EmailWarmer:
 
-    def __init__(self, asyncio: asyncio, smtplib: smtplib, ssl: ssl, os: os) -> None:
+    def __init__(
+        self, asyncio: asyncio, smtplib: smtplib, ssl: ssl, os: os, logging: logging
+    ):
         self.__asyncio = asyncio
         self.__smtplib = smtplib
         self.__ssl = ssl
         self.__os = os
+        self.__logger = logging.getLogger(__name__)
+        self.__log_tag = self.__class__.__name__
         # Would this benefit from creating a singleton LibraryManager for the libs being injected? It just seems to be more maintenance
         pass
 
