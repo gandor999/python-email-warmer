@@ -6,12 +6,12 @@ from typing import List
 import os
 
 from classes.email.EmailModel import EmailModel
+from utils import read_file
 
 
 class EmailWarmer:
 
     def __init__(self, asyncio: asyncio, smtplib: smtplib, ssl: ssl, os: os) -> None:
-        self.__mock_emails: List[EmailModel] = []
         self.__asyncio = asyncio
         self.__smtplib = smtplib
         self.__ssl = ssl
@@ -20,23 +20,26 @@ class EmailWarmer:
         pass
 
     # [{"mockEmail0@something.com", "stub password"}, {"mockEmail1@something.com", "stub password"}]
-    def build_mock_emails(self):
-        for i in range(101):
-            self.__mock_emails.append(
+    def get_mock_emails(self, number_of_emails: int = 101):
+        mock_emails: List[EmailModel] = []
+        for i in range(number_of_emails):
+            mock_emails.append(
                 EmailModel(
                     f"mockEmail_{i}_@something.com", "stub password", isMock=True
                 )
             )
-
-        return self
-
-    def get_mock_emails(self):
-        return self.__mock_emails
+        return mock_emails
 
     async def send_email_message(
         self, sender_email: EmailModel, recipient_email: EmailModel
     ):
         if sender_email.isMock() and recipient_email.isMock():
+            print(
+                f"{sender_email.get_email_address()} sending message to {recipient_email.get_email_address()}"
+            )
+
+            await asyncio.sleep(2)
+
             print(
                 f"{sender_email.get_email_address()} sent a message to {recipient_email.get_email_address()}"
             )
@@ -47,26 +50,17 @@ class EmailWarmer:
         sender_email = sender_email.get_email_address()
         recipient_email = recipient_email.get_email_address()
 
-        plain_text = "Plain text | Warm up email"
-        html_content = """\
-            <html>
-                <body>
-                    <p>Warmup email</p>
-                </body>
-            </html>
-        """
+        html_content = read_file("content.html")
 
         msg = MIMEMultipart("alternative")
         msg["From"] = sender_email
         msg["To"] = recipient_email
         msg["Subject"] = "Warmup Email"
 
-        part1 = MIMEText(plain_text, "plain")
-        part2 = MIMEText(html_content, "html")
-        msg.attach(part1)
-        msg.attach(part2)
+        body = MIMEText(html_content, "html")
 
-        # Create a secure SSL context
+        msg.attach(body)
+
         context = self.__ssl.create_default_context()
 
         with self.__smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
@@ -88,13 +82,13 @@ class EmailWarmer:
                 )
         await self.__asyncio.gather(*tasks)
 
-    async def execute_warm_up(self, emails: List[EmailModel]):
+    async def execute_warm_up(
+        self, emails: List[EmailModel], interval_time: int = 1800
+    ):
         tasks = []
         for sender_email in emails:
             tasks.append(self.send_emails_concurrently(sender_email, emails))
         await self.__asyncio.gather(*tasks)
 
-        print("Wait for 5 seconds")
-        await self.__asyncio.sleep(5)
-
-        # await self.send_email_message("", "")
+        print(f"Wait for {interval_time} seconds")
+        await self.__asyncio.sleep(interval_time)

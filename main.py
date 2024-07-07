@@ -13,8 +13,8 @@ def main():
     dotenv.load_dotenv()
 
     email_warmer = EmailWarmer(asyncio, smtplib, ssl, os)
-    mock_emails = email_warmer.build_mock_emails().get_mock_emails()
-    
+    mock_emails = email_warmer.get_mock_emails(10)
+
     real_emails: List[EmailModel] = []
     json_emails: list[dict] = read_json_file("emails.json")
 
@@ -22,7 +22,7 @@ def main():
         real_emails.append(EmailModel(json_email["email"], json_email["password"]))
 
     # for i in range(5):
-    asyncio.run(email_warmer.execute_warm_up(mock_emails))
+    asyncio.run(email_warmer.execute_warm_up(mock_emails, 5))
     # asyncio.run(email_warmer.execute_warm_up(real_emails))
 
 
