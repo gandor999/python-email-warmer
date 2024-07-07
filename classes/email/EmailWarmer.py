@@ -63,10 +63,20 @@ class EmailWarmer:
 
         context = self.__ssl.create_default_context()
 
-        with self.__smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
-            server.login(sender_email, sender_email_password)
-            server.sendmail(sender_email, recipient_email, msg.as_string())
-            server.quit()
+        try:
+            with self.__smtplib.SMTP_SSL(
+                "smtp.gmail.com", port, context=context
+            ) as server:
+                server.login(sender_email, sender_email_password)
+                server.sendmail(sender_email, recipient_email, msg.as_string())
+                self.__logger.info(
+                    f"{self.__log_tag} | send_email_message() | {sender_email} successfully sent a message to {recipient_email}"
+                )
+                server.quit()
+        except Exception as e:
+            self.__logger.warning(
+                f"{self.__log_tag} | send_email_message() | sender_email: {sender_email} | recipient_email: {recipient_email} | exception | {e}"
+            )
 
     # use coroutines instead of threads
     async def send_emails_concurrently(
