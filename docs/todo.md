@@ -7,3 +7,4 @@
 - [x] in getting the emails from a json file put this login in a util dir
 - [x] refactor code to work for python below 3.11
 - [ ] put encryption on passwords when reading from json file for email passwords
+- [x] add readme
